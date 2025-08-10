@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AVENTURA EN LA TIERRA PROMETIDA</title>
+<style>
+  :root{
+    --bg:#0b0c10; --panel:#12141a; --text:#e8eaed; --muted:#a3a8b3; --accent:#60a5fa;
+    --radius:14px; --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  background: #058b2d; /* Verde más intenso */
+  color: var(--text);
+}
+  a{color:inherit; text-decoration:none}
+
+  header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  background: #63e763; /* Verde turquesa */
+  border-bottom: 1px solid #ffffff1f;
+}
+  .nav{height:60px;display:flex;align-items:center;justify-content:space-between;width:min(1100px,100% - 2rem);margin-inline:auto}
+  .back {
+  display: inline-flex;
+  gap: .5rem;
+  align-items: center;
+  padding: .5rem .8rem;
+  border-radius: 10px;
+  outline: 1px solid #ffffff2a;
+  background-color: #058b2d;
+}
+
+.back:hover {
+  outline-color: #ffffff55;
+  filter: brightness(1.2); /* Se ilumina */
+}
+  .back:hover{outline-color:#15b65855}
+  h1{font-size:clamp(1.2rem,1rem + 2.2vw,2rem);margin:0}
+
+  main{width:min(1100px,100% - 2rem);margin:18px auto 40px}
+  .muted{color:var(--muted);margin:.4rem 0 1rem}
+
+  /* Galería */
+  .grid{display:grid;gap:.8rem;grid-template-columns:repeat(4,1fr)}
+  @media (max-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .thumb{position:relative;border-radius:12px;overflow:clip;border:1px solid #ffffff1a;background:#0f1117}
+  .thumb img{width:100%;height:100%;aspect-ratio:4/3;object-fit:cover;display:block;transition:transform .25s ease}
+  .thumb:hover img{transform:scale(1.03)}
+  .thumb:focus-within{outline:2px solid #60a5fa88;border-color:#60a5fa55}
+
+  /* Lightbox */
+  .lightbox{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.8);z-index:50}
+  .lightbox.open{display:grid}
+  .viewer{max-width:96vw;max-height:86vh;position:relative}
+  .viewer img{max-width:100%;max-height:86vh;display:block;border-radius:12px;box-shadow:var(--shadow)}
+  .close, .prev, .next{
+    position:absolute;top:50%;transform:translateY(-50%);border:0;border-radius:999px;
+    background:#00000099;color:#fff;padding:.7rem .9rem;cursor:pointer;font-size:1.1rem
+  }
+  .close{top:0;right:0;transform:none;margin:.6rem;background:#000000cc}
+  .prev{left:-3rem}
+  .next{right:-3rem}
+  @media (max-width:700px){ .prev{left:.25rem} .next{right:.25rem} }
+  .counter{position:absolute;bottom:-2rem;left:0;right:0;text-align:center;color:#ffffffb3;font-size:.95rem}
+</style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a class="back" href="escuela.de.verano.2025.html" aria-label="Volver">← Volver</a>
+      <h1>Aventura en la tierra prometida</h1>
+      <div style="width:74px"></div>
+    </div>
+  </header>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <div class="viewer">
+      <button class="close" id="btnClose" aria-label="Cerrar (Esc)">✕</button>
+      <button class="prev"  id="btnPrev"  aria-label="Anterior (◀)">◀</button>
+      <img id="full" alt="">
+      <button class="next"  id="btnNext"  aria-label="Siguiente (▶)">▶</button>
+      <div class="counter" id="counter"></div>
+    </div>
+  </div>
+    <main>
+    <p class="muted"></p>
+    <div id="grid" class="grid" aria-live="polite"></div>
+  </main>
+
+
+
+<script>
+  // 1) Reemplaza estas rutas por las fotos de este álbum
+  const IMAGES = [
+  "Fotos_dia_4/IMG_3948.jpg",
+  "Fotos_dia_4/IMG_3949.jpg",
+  "Fotos_dia_4/IMG_3950.jpg",
+  "Fotos_dia_4/IMG_3951.jpg",
+  "Fotos_dia_4/IMG_3952.jpg",
+  "Fotos_dia_4/IMG_3953.jpg",
+  "Fotos_dia_4/IMG_3954.jpg",
+  "Fotos_dia_4/IMG_3955.jpg",
+  "Fotos_dia_4/IMG_3956.jpg",
+  "Fotos_dia_4/IMG_3957.jpg",
+  "Fotos_dia_4/IMG_3958.jpg",
+  "Fotos_dia_4/IMG_3959.jpg",
+  "Fotos_dia_4/IMG_3960.jpg",
+  "Fotos_dia_4/IMG_3961.jpg",
+  "Fotos_dia_4/IMG_3962.jpg",
+  "Fotos_dia_4/IMG_3963.jpg",
+  "Fotos_dia_4/IMG_3964.jpg",
+  "Fotos_dia_4/IMG_3965.jpg",
+  "Fotos_dia_4/IMG_3966.jpg",
+  "Fotos_dia_4/IMG_3967.jpg",
+  "Fotos_dia_4/IMG_3968.jpg",
+  "Fotos_dia_4/IMG_3969.jpg",
+  "Fotos_dia_4/IMG_3970.jpg",
+  "Fotos_dia_4/IMG_3971.jpg",
+  "Fotos_dia_4/IMG_3972.jpg",
+  "Fotos_dia_4/IMG_3972.jpg",
+  "Fotos_dia_4/IMG_3973.jpg",
+  "Fotos_dia_4/IMG_3974.jpg",
+  "Fotos_dia_4/IMG_3975.jpg",
+  "Fotos_dia_4/IMG_3976.jpg",
+  "Fotos_dia_4/IMG_3977.jpg",
+  "Fotos_dia_4/IMG_3978.jpg",
+  "Fotos_dia_4/IMG_3979.jpg",
+  "Fotos_dia_4/IMG_3980.jpg",
+  "Fotos_dia_4/IMG_3981.jpg",
+  "Fotos_dia_4/IMG_3982.jpg",
+  "Fotos_dia_4/IMG_3987.jpg",
+  "Fotos_dia_4/IMG_3988.jpg",
+  "Fotos_dia_4/IMG_3989.jpg",
+  "Fotos_dia_4/IMG_3990.jpg",
+  "Fotos_dia_4/IMG_3992.jpg",
+  "Fotos_dia_4/IMG_3993.jpg",
+  "Fotos_dia_4/IMG_3994.jpg",
+  "Fotos_dia_4/IMG_3995.jpg",
+  "Fotos_dia_4/IMG_3996.jpg",
+  "Fotos_dia_4/IMG_3997.jpg",
+  "Fotos_dia_4/IMG_3998.jpg",
+  "Fotos_dia_4/IMG_3999.jpg",
+  "Fotos_dia_4/IMG_4003.jpg",
+  "Fotos_dia_4/IMG_4004.jpg",
+  "Fotos_dia_4/IMG_4005.jpg",
+  "Fotos_dia_4/IMG_4006.jpg",
+  "Fotos_dia_4/IMG_4007.jpg",
+  "Fotos_dia_4/IMG_4008.jpg",
+  "Fotos_dia_4/IMG_4009.jpg",
+  "Fotos_dia_4/IMG_4010.jpg",
+  "Fotos_dia_4/IMG_4011.jpg",
+  "Fotos_dia_4/IMG_4012.jpg",
+  "Fotos_dia_4/IMG_4013.jpg",
+  "Fotos_dia_4/IMG_4014.jpg",
+  "Fotos_dia_4/IMG_4015.jpg",
+  "Fotos_dia_4/IMG_4016.jpg",
+  "Fotos_dia_4/IMG_4017.jpg",
+  "Fotos_dia_4/IMG_4018.jpg",
+  "Fotos_dia_4/IMG_4019.jpg",
+  "Fotos_dia_4/IMG_4020.jpg",
+  "Fotos_dia_4/IMG_4021.jpg",
+  "Fotos_dia_4/IMG_4022.jpg",
+  "Fotos_dia_4/IMG_4024.jpg",
+  "Fotos_dia_4/IMG_4025.jpg",
+  "Fotos_dia_4/IMG_4026.jpg",
+  "Fotos_dia_4/IMG_4027.jpg",
+  "Fotos_dia_4/IMG_4029.jpg",
+  "Fotos_dia_4/IMG_4030.jpg",
+  "Fotos_dia_4/IMG_4031.jpg",
+  "Fotos_dia_4/IMG_4032.jpg",
+  "Fotos_dia_4/IMG_4033.jpg",
+  "Fotos_dia_4/IMG_4034.jpg",
+  "Fotos_dia_4/IMG_4035.jpg",
+  "Fotos_dia_4/IMG_4036.jpg",
+  "Fotos_dia_4/IMG_4037.jpg",
+  "Fotos_dia_4/IMG_4038.jpg",
+  "Fotos_dia_4/IMG_4039.jpg",
+  "Fotos_dia_4/IMG_4040.jpg",
+  "Fotos_dia_4/IMG_4041.jpg",
+  "Fotos_dia_4/IMG_4042.jpg",
+  "Fotos_dia_4/IMG_4043.jpg",
+  "Fotos_dia_4/IMG_4044.jpg",
+  "Fotos_dia_4/IMG_4045.jpg",
+  "Fotos_dia_4/IMG_4046.jpg",
+  "Fotos_dia_4/IMG_4047.jpg",
+  "Fotos_dia_4/IMG_4048.jpg",
+  "Fotos_dia_4/IMG_4049.jpg",
+  "Fotos_dia_4/IMG_4050.jpg",
+  "Fotos_dia_4/IMG_4051.jpg",
+  "Fotos_dia_4/IMG_4052.jpg",
+  "Fotos_dia_4/IMG_4053.jpg",
+  "Fotos_dia_4/IMG_4054.jpg",
+  "Fotos_dia_4/IMG_4055.jpg",
+  "Fotos_dia_4/IMG_4056.jpg",
+  "Fotos_dia_4/IMG_4057.jpg",
+  "Fotos_dia_4/IMG_4058.jpg",
+  "Fotos_dia_4/IMG_4059.jpg",
+  "Fotos_dia_4/IMG_4060.jpg",
+  "Fotos_dia_4/IMG_4061.jpg",
+  "Fotos_dia_4/IMG_4062.jpg",
+  "Fotos_dia_4/IMG_4063.jpg",
+  "Fotos_dia_4/IMG_4064.jpg",
+  "Fotos_dia_4/IMG_4065.jpg",
+  "Fotos_dia_4/IMG_4066.jpg",
+  "Fotos_dia_4/IMG_4067.jpg",
+  "Fotos_dia_4/IMG_4068.jpg",
+  "Fotos_dia_4/IMG_4069.jpg",
+  "Fotos_dia_4/IMG_4070.jpg",
+  "Fotos_dia_4/IMG_4071.jpg",
+  "Fotos_dia_4/IMG_4072.jpg",
+  "Fotos_dia_4/IMG_4073.jpg",
+  "Fotos_dia_4/IMG_4074.jpg",
+  "Fotos_dia_4/IMG_4075.jpg",
+  "Fotos_dia_4/IMG_4076.jpg",
+  "Fotos_dia_4/IMG_4077.jpg",
+  "Fotos_dia_4/IMG_4078.jpg",
+  "Fotos_dia_4/IMG_4079.jpg",
+  "Fotos_dia_4/IMG_4080.jpg",
+  "Fotos_dia_4/IMG_4081.jpg",
+  "Fotos_dia_4/IMG_4083.jpg",
+  "Fotos_dia_4/IMG_4084.jpg",
+  "Fotos_dia_4/IMG_4085.jpg",
+  "Fotos_dia_4/IMG_4086.jpg",
+  "Fotos_dia_4/IMG_4087.jpg",
+  "Fotos_dia_4/IMG_4088.jpg",
+  "Fotos_dia_4/IMG_4089.jpg",
+  "Fotos_dia_4/IMG_4090.jpg",
+  "Fotos_dia_4/IMG_4091.jpg",
+  "Fotos_dia_4/IMG_4092.jpg",
+  "Fotos_dia_4/IMG_4093.jpg",
+  "Fotos_dia_4/IMG_4094.jpg",
+  "Fotos_dia_4/IMG_4095.jpg",
+  "Fotos_dia_4/IMG_4096.jpg",
+  "Fotos_dia_4/IMG_4097.jpg",
+  "Fotos_dia_4/IMG_4098.jpg",
+  "Fotos_dia_4/IMG_4099.jpg",
+  "Fotos_dia_4/IMG_4100.jpg",
+  "Fotos_dia_4/IMG_4101.jpg",
+  "Fotos_dia_4/IMG_4102.jpg",
+  "Fotos_dia_4/IMG_4103.jpg",
+  "Fotos_dia_4/IMG_4104.jpg",
+  "Fotos_dia_4/IMG_4105.jpg",
+  "Fotos_dia_4/IMG_4106.jpg",
+  "Fotos_dia_4/IMG_4110.jpg",
+  "Fotos_dia_4/IMG_4111.jpg"
+];
+
+  // 2) Opcional: miniaturas distintas (si no, usa las mismas)
+  const THUMBS = IMAGES.map(u => u); // o pon aquí URLs más pequeñas
+
+  // --- Render de la grilla ---
+  const grid = document.getElementById("grid");
+  THUMBS.forEach((src, i) => {
+    const a = document.createElement("a");
+    a.href = "#";
+    a.className = "thumb";
+    a.innerHTML = `<img src="${src}" alt="Foto ${i+1}" loading="lazy">`;
+    a.addEventListener("click", (e) => { e.preventDefault(); openLightbox(i); });
+    a.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openLightbox(i); }});
+    a.tabIndex = 0;
+    grid.appendChild(a);
+  });
+
+  // --- Lightbox ---
+  const lb = document.getElementById("lightbox");
+  const full = document.getElementById("full");
+  const counter = document.getElementById("counter");
+  const btnClose = document.getElementById("btnClose");
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+
+  let idx = 0;
+
+  function updateViewer() {
+    full.src = IMAGES[idx];
+    full.alt = `Foto ${idx+1} de ${IMAGES.length}`;
+    counter.textContent = `${idx+1} / ${IMAGES.length}`;
+  }
+
+  function openLightbox(startIndex=0){
+    idx = startIndex;
+    updateViewer();
+    lb.classList.add("open");
+    lb.setAttribute("aria-hidden","false");
+  }
+  function closeLightbox(){
+    lb.classList.remove("open");
+    lb.setAttribute("aria-hidden","true");
+  }
+  function prev(){ idx = (idx - 1 + IMAGES.length) % IMAGES.length; updateViewer(); }
+  function next(){ idx = (idx + 1) % IMAGES.length; updateViewer(); }
+
+  btnClose.addEventListener("click", closeLightbox);
+  btnPrev.addEventListener("click", prev);
+  btnNext.addEventListener("click", next);
+
+  // Cerrar al clicar fuera de la imagen
+  lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
+
+  // Teclado
+  window.addEventListener("keydown", (e)=>{
+    if(!lb.classList.contains("open")) return;
+    if(e.key === "Escape") closeLightbox();
+    if(e.key === "ArrowLeft") prev();
+    if(e.key === "ArrowRight") next();
+  });
+
+  // Gestos táctiles simples (swipe)
+  let touchX = null;
+  lb.addEventListener("touchstart", (e)=>{ touchX = e.changedTouches[0].clientX; });
+  lb.addEventListener("touchend", (e)=>{
+    if(touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (dx > 40) prev();
+    if (dx < -40) next();
+    touchX = null;
+  });
+</script>
+</body>
+</html> 

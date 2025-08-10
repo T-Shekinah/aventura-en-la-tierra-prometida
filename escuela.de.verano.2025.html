@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AVENTURA EN LA TIERRA PROMETIDA</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .albums {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+    }
+    .album {
+      position: relative;
+      aspect-ratio: 16 / 10; /* Mantiene proporción */
+      background-size: cover;
+      background-position: center;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: transform 0.2s ease;
+    }
+    .album:hover {
+      transform: scale(1.03);
+    }
+    .album::after {
+      content: attr(data-title);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+    @media (max-width: 500px) {
+      .album::after {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <style>
+    body {
+  margin: 0;
+  font-family: 'Times New Roman', Times, serif;
+  background-image: url(FONDOPRINCIPAL.jpg);
+  background-size: cover;       /* hace que la imagen cubra toda la pantalla */
+  background-position: center;  /* centra la imagen */
+  background-attachment: fixed; /* la imagen queda fija al hacer scroll */
+  background-repeat: no-repeat; /* evita que se repita */
+  color: #ffffff;                  /* color del texto */
+    }
+    .borde-texto {
+  color: white;
+  -webkit-text-stroke: 0.5px black;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+}
+  </style>
+    <h1 class="borde-texto">AVENTURA EN LA TIERRA PROMETIDA</h1>
+  <div class="albums">
+    <div class="album" data-title="DIA 1- Preparados para la aventura" style="background-image: url(dia1.jpg)"onclick="abrirAlbum('album1.html')"></div>
+    <div class="album" data-title="DIA 2- Cruzanod el mar rojo" style="background-image:url(dia2.jpg)" onclick="abrirAlbum('album2.html')"></div>
+    <div class="album" data-title="DIA 3- El maná del cielo " style="background-image:url(dia3.jpg)" onclick="abrirAlbum('album3.html')"></div>
+    <div class="album" data-title="DIA 4- Las murallas de Jericó" style="background-image:url(dia4.jpg)" onclick="abrirAlbum('album4.html')"></div>
+    <div class="album" data-title="DIA 5- UN CHAPUZÓN" style="background-image:url(dia5.jpg)" onclick="abrirAlbum('album5.html')"></div>
+    <div class="album" data-title="DIA 6- Celebrando juntos" style="background-image:url(dia6.jpg)" onclick="abrirAlbum('album6.html')"></div>
+    <div class="album" data-title="DIA 7- Hay que decir 'Hasta pronto'" style="background-image:url(dia7.jpg)" onclick="abrirAlbum('album7.html')"></div>
+  </div>
+
+  <script>
+    function abrirAlbum(url) {
+      window.location.href = url;
+    }
+  </script>
+
+</body>
+</html>
+
+

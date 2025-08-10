@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AVENTURA EN LA TIERRA PROMETIDA</title>
+<style>
+  :root{
+    --bg:#0b0c10; --panel:#12141a; --text:#e8eaed; --muted:#a3a8b3; --accent:#60a5fa;
+    --radius:14px; --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  background: #058b2d; /* Verde más intenso */
+  color: var(--text);
+}
+  a{color:inherit; text-decoration:none}
+
+  header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  background: #63e763; /* Verde turquesa */
+  border-bottom: 1px solid #ffffff1f;
+}
+  .nav{height:60px;display:flex;align-items:center;justify-content:space-between;width:min(1100px,100% - 2rem);margin-inline:auto}
+  .back {
+  display: inline-flex;
+  gap: .5rem;
+  align-items: center;
+  padding: .5rem .8rem;
+  border-radius: 10px;
+  outline: 1px solid #ffffff2a;
+  background-color: #058b2d;
+}
+
+.back:hover {
+  outline-color: #ffffff55;
+  filter: brightness(1.2); /* Se ilumina */
+}
+  .back:hover{outline-color:#15b65855}
+  h1{font-size:clamp(1.2rem,1rem + 2.2vw,2rem);margin:0}
+
+  main{width:min(1100px,100% - 2rem);margin:18px auto 40px}
+  .muted{color:var(--muted);margin:.4rem 0 1rem}
+
+  /* Galería */
+  .grid{display:grid;gap:.8rem;grid-template-columns:repeat(4,1fr)}
+  @media (max-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .thumb{position:relative;border-radius:12px;overflow:clip;border:1px solid #ffffff1a;background:#0f1117}
+  .thumb img{width:100%;height:100%;aspect-ratio:4/3;object-fit:cover;display:block;transition:transform .25s ease}
+  .thumb:hover img{transform:scale(1.03)}
+  .thumb:focus-within{outline:2px solid #60a5fa88;border-color:#60a5fa55}
+
+  /* Lightbox */
+  .lightbox{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.8);z-index:50}
+  .lightbox.open{display:grid}
+  .viewer{max-width:96vw;max-height:86vh;position:relative}
+  .viewer img{max-width:100%;max-height:86vh;display:block;border-radius:12px;box-shadow:var(--shadow)}
+  .close, .prev, .next{
+    position:absolute;top:50%;transform:translateY(-50%);border:0;border-radius:999px;
+    background:#00000099;color:#fff;padding:.7rem .9rem;cursor:pointer;font-size:1.1rem
+  }
+  .close{top:0;right:0;transform:none;margin:.6rem;background:#000000cc}
+  .prev{left:-3rem}
+  .next{right:-3rem}
+  @media (max-width:700px){ .prev{left:.25rem} .next{right:.25rem} }
+  .counter{position:absolute;bottom:-2rem;left:0;right:0;text-align:center;color:#ffffffb3;font-size:.95rem}
+</style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <a class="back" href="escuela.de.verano.2025.html" aria-label="Volver">← Volver</a>
+      <h1>Aventura en la tierra prometida</h1>
+      <div style="width:74px"></div>
+    </div>
+  </header>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <div class="viewer">
+      <button class="close" id="btnClose" aria-label="Cerrar (Esc)">✕</button>
+      <button class="prev"  id="btnPrev"  aria-label="Anterior (◀)">◀</button>
+      <img id="full" alt="">
+      <button class="next"  id="btnNext"  aria-label="Siguiente (▶)">▶</button>
+      <div class="counter" id="counter"></div>
+    </div>
+  </div>
+    <main>
+    <p class="muted"></p>
+    <div id="grid" class="grid" aria-live="polite"></div>
+  </main>
+
+
+
+<script>
+  // 1) Reemplaza estas rutas por las fotos de este álbum
+  const IMAGES = [
+  "Fotos_dia_6/IMG_4320.jpg",
+  "Fotos_dia_6/IMG_4321.jpg",
+  "Fotos_dia_6/IMG_4322.jpg",
+  "Fotos_dia_6/IMG_4323.jpg",
+  "Fotos_dia_6/IMG_4324.jpg",
+  "Fotos_dia_6/IMG_4325.jpg",
+  "Fotos_dia_6/IMG_4326.jpg",
+  "Fotos_dia_6/IMG_4327.jpg",
+  "Fotos_dia_6/IMG_4328.jpg",
+  "Fotos_dia_6/IMG_4329.jpg",
+  "Fotos_dia_6/IMG_4330.jpg",
+  "Fotos_dia_6/IMG_4331.jpg",
+  "Fotos_dia_6/IMG_4334.jpg",
+  "Fotos_dia_6/IMG_4335.jpg",
+  "Fotos_dia_6/IMG_4336.jpg",
+  "Fotos_dia_6/IMG_4337.jpg",
+  "Fotos_dia_6/IMG_4338.jpg",
+  "Fotos_dia_6/IMG_4339.jpg",
+  "Fotos_dia_6/IMG_4342.jpg",
+  "Fotos_dia_6/IMG_4343.jpg",
+  "Fotos_dia_6/IMG_4344.jpg",
+  "Fotos_dia_6/IMG_4345.jpg",
+  "Fotos_dia_6/IMG_4346.jpg",
+  "Fotos_dia_6/IMG_4347.jpg",
+  "Fotos_dia_6/IMG_4348.jpg",
+  "Fotos_dia_6/IMG_4349.jpg",
+  "Fotos_dia_6/IMG_4350.jpg",
+  "Fotos_dia_6/IMG_4351.jpg",
+  "Fotos_dia_6/IMG_4352.jpg",
+  "Fotos_dia_6/IMG_4353.jpg",
+  "Fotos_dia_6/IMG_4354.jpg",
+  "Fotos_dia_6/IMG_4355.jpg",
+  "Fotos_dia_6/IMG_4356.jpg",
+  "Fotos_dia_6/IMG_4357.jpg",
+  "Fotos_dia_6/IMG_4358.jpg",
+  "Fotos_dia_6/IMG_4360.jpg",
+  "Fotos_dia_6/IMG_4361.jpg",
+  "Fotos_dia_6/IMG_4362.jpg",
+  "Fotos_dia_6/IMG_4363.jpg",
+  "Fotos_dia_6/IMG_4368.jpg",
+  "Fotos_dia_6/IMG_4369.jpg",
+  "Fotos_dia_6/IMG_4370.jpg",
+  "Fotos_dia_6/IMG_4371.jpg",
+  "Fotos_dia_6/IMG_4372.jpg",
+  "Fotos_dia_6/IMG_4373.jpg",
+  "Fotos_dia_6/IMG_4374.jpg",
+  "Fotos_dia_6/IMG_4375.jpg",
+  "Fotos_dia_6/IMG_4376.jpg",
+  "Fotos_dia_6/IMG_4377.jpg",
+  "Fotos_dia_6/IMG_4380.jpg",
+  "Fotos_dia_6/IMG_4381.jpg",
+  "Fotos_dia_6/IMG_4382.jpg",
+  "Fotos_dia_6/IMG_4383.jpg",
+  "Fotos_dia_6/IMG_4384.jpg",
+  "Fotos_dia_6/IMG_4385.jpg",
+  "Fotos_dia_6/IMG_4386.jpg",
+  "Fotos_dia_6/IMG_4387.jpg",
+  "Fotos_dia_6/IMG_4388.jpg",
+  "Fotos_dia_6/IMG_4389.jpg",
+  "Fotos_dia_6/IMG_4390.jpg",
+  "Fotos_dia_6/IMG_4392.jpg",
+  "Fotos_dia_6/IMG_4393.jpg",
+  "Fotos_dia_6/IMG_4394.jpg",
+  "Fotos_dia_6/IMG_4395.jpg",
+  "Fotos_dia_6/IMG_4396.jpg",
+  "Fotos_dia_6/IMG_4397.jpg",
+  "Fotos_dia_6/IMG_8027.jpeg",
+  "Fotos_dia_6/IMG_8053.jpeg",
+  "Fotos_dia_6/IMG_8055.jpeg",
+  "Fotos_dia_6/IMG_8058.jpeg",
+  "Fotos_dia_6/IMG_8060.jpeg",
+  "Fotos_dia_6/IMG_8061.jpeg",
+  "Fotos_dia_6/IMG_8065.jpeg",
+  "Fotos_dia_6/IMG_8068.jpeg",
+  "Fotos_dia_6/IMG_8074.jpeg",
+  "Fotos_dia_6/IMG_8079.jpeg",
+  "Fotos_dia_6/IMG_8093.jpeg",
+];
+
+
+  // 2) Opcional: miniaturas distintas (si no, usa las mismas)
+  const THUMBS = IMAGES.map(u => u); // o pon aquí URLs más pequeñas
+
+  // --- Render de la grilla ---
+  const grid = document.getElementById("grid");
+  THUMBS.forEach((src, i) => {
+    const a = document.createElement("a");
+    a.href = "#";
+    a.className = "thumb";
+    a.innerHTML = `<img src="${src}" alt="Foto ${i+1}" loading="lazy">`;
+    a.addEventListener("click", (e) => { e.preventDefault(); openLightbox(i); });
+    a.addEventListener("keydown", (e) => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openLightbox(i); }});
+    a.tabIndex = 0;
+    grid.appendChild(a);
+  });
+
+  // --- Lightbox ---
+  const lb = document.getElementById("lightbox");
+  const full = document.getElementById("full");
+  const counter = document.getElementById("counter");
+  const btnClose = document.getElementById("btnClose");
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+
+  let idx = 0;
+
+  function updateViewer() {
+    full.src = IMAGES[idx];
+    full.alt = `Foto ${idx+1} de ${IMAGES.length}`;
+    counter.textContent = `${idx+1} / ${IMAGES.length}`;
+  }
+
+  function openLightbox(startIndex=0){
+    idx = startIndex;
+    updateViewer();
+    lb.classList.add("open");
+    lb.setAttribute("aria-hidden","false");
+  }
+  function closeLightbox(){
+    lb.classList.remove("open");
+    lb.setAttribute("aria-hidden","true");
+  }
+  function prev(){ idx = (idx - 1 + IMAGES.length) % IMAGES.length; updateViewer(); }
+  function next(){ idx = (idx + 1) % IMAGES.length; updateViewer(); }
+
+  btnClose.addEventListener("click", closeLightbox);
+  btnPrev.addEventListener("click", prev);
+  btnNext.addEventListener("click", next);
+
+  // Cerrar al clicar fuera de la imagen
+  lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
+
+  // Teclado
+  window.addEventListener("keydown", (e)=>{
+    if(!lb.classList.contains("open")) return;
+    if(e.key === "Escape") closeLightbox();
+    if(e.key === "ArrowLeft") prev();
+    if(e.key === "ArrowRight") next();
+  });
+
+  // Gestos táctiles simples (swipe)
+  let touchX = null;
+  lb.addEventListener("touchstart", (e)=>{ touchX = e.changedTouches[0].clientX; });
+  lb.addEventListener("touchend", (e)=>{
+    if(touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (dx > 40) prev();
+    if (dx < -40) next();
+    touchX = null;
+  });
+</script>
+</body>
+</html>
